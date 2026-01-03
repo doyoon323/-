@@ -70,7 +70,25 @@ public class UserService {
         }
     }
     //회원가입 하는데 DB통신이 4번 -> 대규모 트래픽시 구체적인 메시지는 생략하는 것이 좋다. 
+/// 대처법 
+// 1. Redis 기반의 '초고속 중복 체크' (Caching) : 모든 유저의 loginId나 email 정보를 메모리 기반 DB인 Redis에 Key-Value 형태로 저장해 둡니다.
+/// 2.  DB 샤딩 (Database Sharding) : 트래픽이 10대로 분산되므로 한 서버가 받는 부하가 1/10로 줄어듭니다.
+/// 3. 
+
 
     //로그인 
+    public Long login(String loginId, String password){
+        User user = userRepository.findByLoginId(loginId)
+                    .orElseThrow(() -> new IllegalArgumentException("아이디가 틀렸습니다."));
 
+        System.out.println("로그인 시도 비번: " + password);
+        boolean isMatch = passwordEncoder.matches(password, user.getPassword());
+        System.out.println("결과: " + isMatch);
+        
+        if (!passwordEncoder.matches(password, user.getPassword())){
+            throw new IllegalArgumentException("비밀번호가 틀렸습니다.");
+        }
+
+        return user.getId(); // 주문할 때 식별자로 쓰기 위해 ID 반환 
+    }
 }

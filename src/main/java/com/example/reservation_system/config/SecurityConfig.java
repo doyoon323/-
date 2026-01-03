@@ -24,8 +24,9 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable()) // 테스트를 위해 CSRF 보안을 잠시 끕니다.
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/signup").permitAll() // 회원가입 경로는 누구나 통과!
-                .anyRequest().authenticated() // 나머지는 다 막음
+                .anyRequest().permitAll() // 회원가입 경로는 누구나 통과! (일단 전부 통과하게 만들어둠)
+
+                //.anyRequest().authenticated() // 나머지는 다 막음
             );
         
         return http.build();
